@@ -1,10 +1,12 @@
-const fetch = require('node-fetch');
-
 const GITHUB_API = 'https://api.github.com';
 
-async function searchRepos(query, per_page=10) {
+// Use global fetch (Node 18+). If unavailable, fall back to node-fetch when installed.
+const nativeFetch = (typeof fetch !== 'undefined') ? fetch : undefined;
+
+async function searchRepos(query, per_page=10, token, fetchImpl) {
   const url = `${GITHUB_API}/search/repositories?q=${encodeURIComponent(query)}&sort=stars&order=desc&per_page=${per_page}`;
-  const res = await fetch(url, { headers: { 'User-Agent': 'repogrep' } });
+  const f = fetchImpl || nativeFetch || (await import('node-fetch')).default;
+  const res = await f(url, { headers: { 'User-Agent': 'repogrep' } });
   if (!res.ok) throw new Error(`GitHub API error ${res.status}`);
   const data = await res.json();
   return data.items || [];
@@ -21,10 +23,12 @@ function summarizeRepo(r) {
   };
 }
 
-async function run(opts) {
+async function run(opts = {}) {
   const q = opts.query || 'web3';
   const per_page = opts.per_page || 10;
-  const repos = await searchRepos(q, per_page);
+  const token = opts.token || process.env.GITHUB_TOKEN;
+  const fetchImpl = opts.fetch;
+  const repos = await searchRepos(q, per_page, token, fetchImpl);
   return repos.map(summarizeRepo);
 }
 

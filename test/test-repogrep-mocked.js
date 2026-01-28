@@ -31,14 +31,18 @@ const repogrep = require('../repogrep');
     ]
   };
 
-  // Intercept the GitHub search API
-  nock(api)
-    .get('/search/repositories')
-    .query(true)
-    .reply(200, fakeResponse);
+  // Use a fake fetch implementation instead of nock
+  const fakeFetch = async (url, opts) => {
+    return {
+      ok: true,
+      status: 200,
+      json: async () => fakeResponse
+    };
+  };
 
   try {
-    const results = await repogrep.run({ query, per_page });
+    const results = await repogrep.run({ query, per_page, fetch: fakeFetch });
+    console.log('Mocked results:', JSON.stringify(results, null, 2));
     assert(Array.isArray(results), 'results should be an array');
     assert(results.length === 2, 'expected two results');
     assert(results[0].name === 'Uniswap/v4-core');
