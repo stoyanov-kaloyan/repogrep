@@ -8,12 +8,16 @@
   },
   "scripts": {
     "start": "node index.js",
-    "run": "node index.js"
+    "run": "node index.js",
+    "test": "node test/test-repogrep.js"
   },
   "author": "kaloyan",
   "license": "MIT",
   "dependencies": {
-    "node-fetch": "^2.6.7",
     "minimist": "^1.2.8"
+  },
+  "devDependencies": {
+    "nock": "^13.3.0",
+    "mocha": "^10.2.0"
   }
 }
