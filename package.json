@@ -1,0 +1,19 @@
+{
+  "name": "repogrep",
+  "version": "0.1.0",
+  "description": "Lightweight GitHub repo grepping tool for signals (keywords, stars, recent activity)",
+  "main": "index.js",
+  "bin": {
+    "repogrep": "./index.js"
+  },
+  "scripts": {
+    "start": "node index.js",
+    "run": "node index.js"
+  },
+  "author": "kaloyan",
+  "license": "MIT",
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "minimist": "^1.2.8"
+  }
+}
